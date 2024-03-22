@@ -1,0 +1,93 @@
+#horaRegistro{
+    font-size: 20px;
+    margin: 10px;
+}
+
+
+
+.card{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    border: none;
+}
+
+.card-header{
+    background-color:  rgb(66, 62, 62);
+    color: white;
+    border: none;
+}
+.card-body{
+    background-color:  rgb(201, 198, 198);
+    border: none;
+
+}
+.form-label{
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.form-control{
+    border: solid 1px;
+}
+
+.boton{   
+    margin-top: 15px;
+    border: solid 1px #415367;
+    border-radius: 1.3rem;
+    background-color: #627d9b;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.boton:hover{
+    background-color: #4d6178 ;
+    color: white;
+    border: solid 1px #161c23;
+    transform: scale(1.05); 
+    transition: transform 0.3s ease;
+}
+
+.boton:active, .boton:focus{
+    background-color: #3d4d60 ;
+    color: white;
+    border: solid 1px #161c23;
+}
+.btn-lg {
+    width: 220px; 
+}
+
+.container-turn{
+    margin-top: 60px;
+    margin-bottom: 10px;
+    background-color: rgb(174, 164, 164); 
+    width: calc(100% - 20px);
+    max-width: 420px; 
+    height: 360px;
+    box-shadow: 2px 7px 10px rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    border: solid 1px  rgb(94, 85, 85);
+    padding: 5px;
+}
+
+.container-form{
+    margin-top: 70px;
+    
+}
+
+.container-form button{
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    border:solid 1px rgb(40, 40, 40);
+    
+}
+
+.container-form button:hover{
+    transform: scale(1.05); 
+    transition: transform 0.5s ease;
+    border:solid 1px rgb(40, 40, 40);
+}
+
+.titulo{
+    margin-top: 22px;
+    font-weight: bold;
+}
