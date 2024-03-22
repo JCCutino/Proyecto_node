@@ -20,9 +20,9 @@ app.post('/login', async (req, res) => {
     try {
         const resultadoValidacion = await validarCredenciales(correo, contrasena);
         const usuario = resultadoValidacion.usuario;
-        if (resultadoValidacion) {
+        if (resultadoValidacion.valido) {
             // Si las credenciales son válidas, redirige al usuario a la página de datos
-            res.render("datos", { usuario });
+            res.render("datos", {usuario });
         } else {
             // Si las credenciales no son válidas, vuelve atrás
             res.redirect('back');

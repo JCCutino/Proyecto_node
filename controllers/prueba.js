@@ -62,7 +62,7 @@ function validarCredenciales(correo, contrasena) {
                             resolve(false); // Contraseña incorrecta
                         } else {
                             connection.end();
-                            resolve(true, usuario); // Credenciales válidas
+                            resolve({valido: true, usuario}); // Credenciales válidas
                         }
                     }
                 }
