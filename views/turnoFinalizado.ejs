@@ -17,13 +17,16 @@
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous"
         />
-        <link rel="stylesheet" href="assets/style.css">
-        <script defer src="assets/script.js"></script>
+        <link rel="stylesheet" href="/css/styles.css">
+        <script defer src="/js/scriptHoras.js"></script>
     </head>
 </head>
 <body> 
     <header>
         <h1> <%= usuario.nombreCompleto %></h1>
+        <% if (typeof ultimaHoraRegistro !== 'undefined') { %>
+            <h1 id="horaRegistro">Último registro <%= ultimaHoraRegistro %></h1>
+        <% } %>
     </header>
     <main>
     <div class="container container-turn">

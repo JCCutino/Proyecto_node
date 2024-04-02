@@ -8,13 +8,14 @@ class HttpUsuarios {
                 const idUsuario = req.cookies.idUsuario;
                 
                 const usuario = await libUsuarios.obtenerUsuario(idUsuario);
-                
+                const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(idUsuario);
+
                 if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado" ){
-                    res.render("turnoIniciado", {usuario });    
+                    res.render("turnoIniciado", {usuario, ultimaHoraRegistro });    
                 } else if (usuario.estadoTurno == "Finalizado"){
-                    res.render("turnoFinalizado", {usuario });    
+                    res.render("turnoFinalizado", {usuario, ultimaHoraRegistro});    
             } else if (usuario.estadoTurno == "Pausado"){
-                res.render("turnoPausado", {usuario });       
+                res.render("turnoPausado", {usuario, ultimaHoraRegistro });       
             }
           
         } else {
@@ -35,6 +36,7 @@ class HttpUsuarios {
     try {
         const resultadoValidacion = await libUsuarios.validarCredenciales(correo, contrasena);
         const usuario = resultadoValidacion.usuario;
+        const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(usuario.idUsuario);
 
         if (resultadoValidacion.valido) {
             const tresMeses = 90 * 24 * 60 * 60 * 1000;
@@ -47,11 +49,11 @@ class HttpUsuarios {
 
             
             if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado" ){
-                res.render("turnoIniciado", {usuario });    
+                res.render("turnoIniciado", {usuario, ultimaHoraRegistro});    
             } else if (usuario.estadoTurno == "Finalizado"){
-                res.render("turnoFinalizado", {usuario });    
+                res.render("turnoFinalizado", {usuario, ultimaHoraRegistro});    
         } else if (usuario.estadoTurno == "Pausado"){
-            res.render("turnoPausado", {usuario });       
+            res.render("turnoPausado", {usuario, ultimaHoraRegistro});       
         }
     }
     } catch (error) {
@@ -67,14 +69,15 @@ class HttpUsuarios {
             const idUsuario = req.cookies.idUsuario;
             const insertarEstadoUsuario = await libUsuarios.insertarEstadoUsuario(accion, idUsuario);
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
+            const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(idUsuario);
 
             if (insertarEstadoUsuario) {
                 if (accion == 'iniciar_jornada' || accion == "reanudar_jornada") {
-                    res.render("turnoIniciado", { usuario });    
+                    res.render("turnoIniciado", { usuario, ultimaHoraRegistro });    
                 } else if (accion ==="finalizar_jornada") {
-                    res.render("turnoFinalizado", { usuario });    
+                    res.render("turnoFinalizado", { usuario, ultimaHoraRegistro });    
                 } else if (accion == "pausar_jornada") {
-                    res.render("turnoPausado", { usuario });       
+                    res.render("turnoPausado", { usuario, ultimaHoraRegistro });       
                 } else {
                     // Si el estado del turno no es ninguno de los anteriores, redirigir a una página de error
                     res.status(404).send("Estado de turno inválido");

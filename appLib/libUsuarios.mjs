@@ -89,6 +89,29 @@ class LibUsuarios {
         });
     }
     
+    obtenerUltimaHoraRegistro(idUsuario) {
+        const consulta = `SELECT MAX(horaRegistroGMT) AS ultima_hora FROM turno WHERE idUsuario = ?`;
+    
+        return new Promise(async (resolve, reject) => {
+            const connection = await dbController.conectarDB(); 
+            connection.query(consulta, [idUsuario], (err, resultados) => {
+                if (err) {
+                    console.error('Error al obtener la última hora de registro:', err);
+                    reject('Error al obtener la última hora de registro');
+                } else {
+                    if (resultados.length > 0) {
+                        const ultima_hora = resultados[0].ultima_hora;
+                        const hora_utc = new Date(ultima_hora);
+                       
+                        resolve(hora_utc);
+                    } else {
+                        resolve("No se encontraron registros para este usuario.");
+                    }
+                }
+            });
+        });
+    }
+    
     
 
 }
