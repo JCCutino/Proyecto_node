@@ -23,7 +23,7 @@ class HttpUsuarios {
             }
         } catch (error) {
             console.error('Error al procesar la acción de turno:', error);
-            res.status(500).send('Error al recordar la cookie');
+            res.status(500).send('Error al conectar con la base de datos');
         }
     }
     
@@ -67,11 +67,18 @@ class HttpUsuarios {
         try {
             const accion = req.body.accion;
             const idUsuario = req.cookies.idUsuario;
-            const insertarEstadoUsuario = await libUsuarios.insertarEstadoUsuario(accion, idUsuario);
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
+
+            if (usuario.estadoTurno == "Iniciado" && accion != "iniciar_jornada" && accion != "reanudar_jornada"){
+               await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+            }else if (usuario.estadoTurno == "Finalizado" && accion != "finalizar_jornada" && accion != "pausar_jornada" && accion != "reanudar_jornada"){
+               await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+            }else if (usuario.estadoTurno == "Pausado" && accion != "pausar_jornada" && accion != "iniciar_jornada"){
+               await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+            }
+
             const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(idUsuario);
 
-            if (insertarEstadoUsuario) {
                 if (accion == 'iniciar_jornada' || accion == "reanudar_jornada") {
                     res.render("turnoIniciado", { usuario, ultimaHoraRegistro });    
                 } else if (accion ==="finalizar_jornada") {
@@ -82,9 +89,6 @@ class HttpUsuarios {
                     // Si el estado del turno no es ninguno de los anteriores, redirigir a una página de error
                     res.status(404).send("Estado de turno inválido");
                 }
-            }
-
-
             
         } catch (error) {
             console.error('Error al procesar la acción de turno:', error);
