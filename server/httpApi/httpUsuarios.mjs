@@ -27,7 +27,6 @@ class HttpUsuarios {
         try {
             const resultadoValidacion = await libUsuarios.validarCredenciales(correo, contrasena);
             const usuario = resultadoValidacion.usuario;
-            const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(usuario.idUsuario);
 
             if (resultadoValidacion.valido) {
                 const tresMeses = 90 * 24 * 60 * 60 * 1000;
@@ -37,15 +36,7 @@ class HttpUsuarios {
                 }
 
                 res.cookie('idUsuario', usuario.idUsuario, { maxAge: tresMeses, httpOnly: true });
-
-
-                if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado") {
-                    res.render("turnoIniciado", { usuario, ultimaHoraRegistro });
-                } else if (usuario.estadoTurno == "Finalizado") {
-                    res.render("turnoFinalizado", { usuario, ultimaHoraRegistro });
-                } else if (usuario.estadoTurno == "Pausado") {
-                    res.render("turnoPausado", { usuario, ultimaHoraRegistro });
-                }
+                res.sendFile(path.join(staticFilesPath, 'pages/turnos/turnos.html'));
             }
         } catch (error) {
             console.error('Error al validar credenciales:', error);
@@ -71,13 +62,14 @@ class HttpUsuarios {
         try {
             let posible = false;
             const accion = req.body.accion;
-            console.log(accion);
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
             if (accion == "iniciar_jornada") {
                 if (usuario.estadoTurno == "Finalizado") {
                     posible = true;
+                }else{
+                    console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
             }
 
@@ -99,13 +91,14 @@ class HttpUsuarios {
         try {
             let posible = false;
             const accion = req.body.accion;
-            console.log(accion);
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
             if (accion == "finalizar_jornada") {
-                if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Pausado") {
+                if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Pausado"|| usuario.estadoTurno == "Reanudado") {
                     posible = true;
+                }else{
+                    console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
             }
 
@@ -128,13 +121,14 @@ class HttpUsuarios {
         try {
             let posible = false;
             const accion = req.body.accion;
-            console.log(accion);
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
             if (accion == "reanudar_jornada") {
                 if (usuario.estadoTurno == "Pausado") {
                     posible = true;
+                }else{
+                    console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
             }
 
@@ -162,6 +156,8 @@ class HttpUsuarios {
             if (accion == "pausar_jornada") {
                 if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado") {
                     posible = true;
+                }else{
+                    console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
             }
 

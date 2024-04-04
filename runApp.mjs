@@ -4,12 +4,14 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url'; 
 import httpUsuarios from './server/httpApi/httpUsuarios.mjs';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3000;
+
 
 app.use(express.static(path.join(__dirname, '/browser')));
 app.use(express.urlencoded({ extended: true }));
@@ -54,6 +56,6 @@ app.post('/reanudar_turno', (req, res) => {
 app.post('/cerrarSesion', httpUsuarios.cerrarSesion);
 
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Example app listening at http://localhost:${process.env.PORT}`);
 });
