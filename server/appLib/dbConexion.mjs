@@ -1,5 +1,5 @@
 import mysql from 'mysql';
-class DbController {
+class DbConexion {
 
  conectarDB() {
     return new Promise((resolve, reject) => {
@@ -23,4 +23,4 @@ class DbController {
 }
 }
 
-export const dbController = new DbController();
+export const dbConexion = new DbConexion();

@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser'; 
 import path from 'path';
 import { fileURLToPath } from 'url'; 
-import httpUsuarios from './httpApi/httpUsuarios.mjs';
+import httpUsuarios from './server/httpApi/httpUsuarios.mjs';
 
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = path.dirname(__filename);
@@ -11,9 +11,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
-app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, '/browser')));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());

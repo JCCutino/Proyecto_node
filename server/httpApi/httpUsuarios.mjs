@@ -1,25 +1,18 @@
 import { libUsuarios } from "../appLib/libUsuarios.mjs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const staticFilesPath = path.join(__dirname, '../../browser');
 
 class HttpUsuarios {
     async getApp(req, res) {
         try {
             if (req.cookies.recordar) {
-                const idUsuario = req.cookies.idUsuario;
-
-                const usuario = await libUsuarios.obtenerUsuario(idUsuario);
-                const ultimaHoraRegistro = await libUsuarios.obtenerUltimaHoraRegistro(idUsuario);
-
-                if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado") {
-                    res.render("turnoIniciado", { usuario, ultimaHoraRegistro });
-                } else if (usuario.estadoTurno == "Finalizado") {
-                    res.render("turnoFinalizado", { usuario, ultimaHoraRegistro });
-                } else if (usuario.estadoTurno == "Pausado") {
-                    res.render("turnoPausado", { usuario, ultimaHoraRegistro });
-                }
-
+                    res.sendFile(path.join(staticFilesPath, 'pages/turnos/turnos.html'));
             } else {
-                res.render('index');
+                res.sendFile(path.join(staticFilesPath, 'pages/login/login.html'));
             }
         } catch (error) {
             console.error('Error al procesar la acción de turno:', error);

@@ -1,11 +1,11 @@
-import {dbController} from "./dbController.mjs";
+import {dbConexion} from "./dbConexion.mjs";
 
 class LibUsuarios {
 
      validarCredenciales(correo, contrasena) {
         return new Promise(async (resolve, reject) => {
             try {
-                const connection = await dbController.conectarDB();; // Establecer conexión a la base de datos
+                const connection = await dbConexion.conectarDB(); // Establecer conexión a la base de datos
     
                 const consultaUsuario = `SELECT * FROM Usuario WHERE correoElectronico = ?`;
                 connection.query(consultaUsuario, [correo], (err, resultados) => {
@@ -37,7 +37,7 @@ class LibUsuarios {
     obtenerUsuario(idUsuario){
         return new Promise(async (resolve, reject) => {
             try {
-                const connection = await dbController.conectarDB(); 
+                const connection = await dbConexion.conectarDB(); 
                 connection.query('SELECT * FROM Usuario WHERE idUsuario =?', [idUsuario], (err, resultados) => {
                     connection.end(); 
                     if (err) {
@@ -60,7 +60,7 @@ class LibUsuarios {
         insertarEstadoUsuario(accion, idUsuario) {
         return new Promise(async (resolve, reject) => {
             try {
-                const connection = await dbController.conectarDB(); 
+                const connection = await dbConexion.conectarDB(); 
     
                 let insertarTurno;
     
@@ -93,7 +93,7 @@ class LibUsuarios {
         const consulta = `SELECT MAX(horaRegistroGMT) AS ultima_hora FROM turno WHERE idUsuario = ?`;
     
         return new Promise(async (resolve, reject) => {
-            const connection = await dbController.conectarDB(); 
+            const connection = await dbConexion.conectarDB(); 
             connection.query(consulta, [idUsuario], (err, resultados) => {
                 if (err) {
                     console.error('Error al obtener la última hora de registro:', err);
