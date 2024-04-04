@@ -26,29 +26,29 @@ app.post('/login', httpUsuarios.postLogin);
 app.post('/obtener_datos_usuario', async (req, res) => {
     try {
         const resultado = await httpUsuarios.postObtenerDatosUsuario(req, res);
-        res.json({ success: true, data: resultado }); 
+        res.json({ success: true, datosUsuario: resultado }); 
     } catch (error) {
         console.error('Error al obtener datos del usuario:', error);
         res.status(500).json({ success: false, error: 'Error al obtener datos del usuario' });
     }
 });
 
-app.post('/iniciar_turno', (req, res) => {
-    const resultado = httpUsuarios.postIniciarTurno(req, res);
+app.post('/iniciar_turno', async (req, res) => {
+    const resultado = await httpUsuarios.postIniciarTurno(req, res);
     res.json({ success: resultado });
 });
-app.post('/finalizar_turno', (req, res) => {
-    const resultado = httpUsuarios.postFinalizarTurno(req, res);
-    res.json({ success: resultado });
-});
-
-app.post('/pausar_turno', (req, res) => {
-    const resultado = httpUsuarios.postPausarTurno(req, res);
+app.post('/finalizar_turno', async (req, res) => {
+    const resultado = await httpUsuarios.postFinalizarTurno(req, res);
     res.json({ success: resultado });
 });
 
-app.post('/reanudar_turno', (req, res) => {
-    const resultado =  httpUsuarios.postReanudarTurno(req, res);
+app.post('/pausar_turno', async (req, res) => {
+    const resultado = await httpUsuarios.postPausarTurno(req, res);
+    res.json({ success: resultado });
+});
+
+app.post('/reanudar_turno', async (req, res) => {
+    const resultado = await httpUsuarios.postReanudarTurno(req, res);
     res.json({ success: resultado });
 });
 

@@ -4,16 +4,17 @@ const btnFinalizarJornada = document.getElementById('btnFinalizarJornada');
 const btnPausarJornada = document.getElementById('btnPausarJornada');
 const btnReanudarJornada = document.getElementById('btnReanudarJornada');
 
-obtenerDatosUsuario();
 
-async function llamadaAPI(funcion, accion) {
+refrescarDatosUsuario();
+
+async function llamadaAPI(funcion) {
+   
     try {
         const response = await fetch('/' + funcion, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ accion: accion })
+            }
         });
         if (response.ok) {
             const data = await response.json();
@@ -25,7 +26,7 @@ async function llamadaAPI(funcion, accion) {
     }
 }
 
-async function obtenerDatosUsuario() {
+async function refrescarDatosUsuario() {
     try {
         const response = await fetch('/obtener_datos_usuario', {
             method: 'POST',
@@ -35,13 +36,11 @@ async function obtenerDatosUsuario() {
         });
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('Esta es la respuesta del servidor:', data.data.usuario.nombreCompleto);
-           
-            if (data && data.data.usuario) {
-                console.log(data.data.usuario, data.data.ultimaHoraRegistro);
-                mostrarBotonesCorrectos(data.data.usuario.estadoTurno);
-                formatearHora(data.data.usuario.nombreCompleto, data.data.ultimaHoraRegistro);
+            const datos = await response.json();
+                       
+            if (datos && datos.datosUsuario.usuario) {
+                mostrarBotonesCorrectos(datos.datosUsuario.usuario.estadoTurno);
+                formatearHora(datos.datosUsuario.usuario.nombreCompleto, datos.datosUsuario.ultimaHoraRegistro);
                
             } else {
                 console.error('No se encontraron datos de usuario en la respuesta del servidor');
@@ -82,21 +81,25 @@ async function mostrarBotonesCorrectos(estado) {
         btnReanudarJornada.classList.remove('d-none');
     }
 }
-
 btnIniciarJornada.addEventListener('click', async () => {
-    await llamadaAPI('iniciar_turno', 'iniciar_jornada');
-    await obtenerDatosUsuario();
+    await llamadaAPI('iniciar_turno');
+     await refrescarDatosUsuario();
 });
-btnFinalizarJornada.addEventListener('click', async () => {
-    await llamadaAPI('finalizar_turno', 'finalizar_jornada');
-    await obtenerDatosUsuario();
 
+
+btnFinalizarJornada.addEventListener('click', async () => {
+    await llamadaAPI('finalizar_turno');
+    await refrescarDatosUsuario();
 });
+
 btnPausarJornada.addEventListener('click', async () => {
-    await llamadaAPI('pausar_turno', 'pausar_jornada');
-    await obtenerDatosUsuario();
+    await llamadaAPI('pausar_turno');
+    await refrescarDatosUsuario();
+   
 });
+
 btnReanudarJornada.addEventListener('click', async () => {
-    await llamadaAPI('reanudar_turno', 'reanudar_jornada');
-    await obtenerDatosUsuario();   
+    await llamadaAPI('reanudar_turno');
+    await refrescarDatosUsuario();
+   
 });

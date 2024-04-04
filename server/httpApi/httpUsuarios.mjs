@@ -30,13 +30,13 @@ class HttpUsuarios {
 
             if (resultadoValidacion.valido) {
                 const tresMeses = 90 * 24 * 60 * 60 * 1000;
-
                 if (recordar) {
                     res.cookie('recordar', true, { maxAge: tresMeses, httpOnly: true });
                 }
-
                 res.cookie('idUsuario', usuario.idUsuario, { maxAge: tresMeses, httpOnly: true });
                 res.sendFile(path.join(staticFilesPath, 'pages/turnos/turnos.html'));
+            }else{
+                res.sendFile(path.join(staticFilesPath, 'pages/login/login.html'));
             }
         } catch (error) {
             console.error('Error al validar credenciales:', error);
@@ -60,21 +60,17 @@ class HttpUsuarios {
     
     async postIniciarTurno(req, res) {
         try {
-            let posible = false;
-            const accion = req.body.accion;
+            let posible = false;            
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
-
-            if (accion == "iniciar_jornada") {
                 if (usuario.estadoTurno == "Finalizado") {
                     posible = true;
                 }else{
                     console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
-            }
-
-            if (posible) {
-                await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+           
+                if (posible) {
+                await libUsuarios.insertarEstadoIniciadoUsuario(idUsuario)
                 return true;
             }
             return false;
@@ -90,20 +86,17 @@ class HttpUsuarios {
     async postFinalizarTurno(req, res) {
         try {
             let posible = false;
-            const accion = req.body.accion;
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
-            if (accion == "finalizar_jornada") {
                 if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Pausado"|| usuario.estadoTurno == "Reanudado") {
                     posible = true;
                 }else{
                     console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
-            }
-
+            
             if (posible) {
-                await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+                await libUsuarios.insertarEstadoFinalizadoUsuario(idUsuario);
                 return true;
             }
             return false;
@@ -120,20 +113,17 @@ class HttpUsuarios {
     async postReanudarTurno(req, res) {
         try {
             let posible = false;
-            const accion = req.body.accion;
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
-            if (accion == "reanudar_jornada") {
                 if (usuario.estadoTurno == "Pausado") {
                     posible = true;
                 }else{
                     console.log("Ocurre el error "+usuario.estadoTurno); 
                 }
-            }
-
+        
             if (posible) {
-                await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+                await libUsuarios.insertarEstadoReanudadoUsuario(idUsuario)
                 return true;
             }
             return false;
@@ -149,20 +139,18 @@ class HttpUsuarios {
     async postPausarTurno(req, res) {
         try {
             let posible = false;
-            const accion = req.body.accion;
             const idUsuario = req.cookies.idUsuario;
             const usuario = await libUsuarios.obtenerUsuario(idUsuario);
 
-            if (accion == "pausar_jornada") {
+            
                 if (usuario.estadoTurno == "Iniciado" || usuario.estadoTurno == "Reanudado") {
                     posible = true;
                 }else{
                     console.log("Ocurre el error "+usuario.estadoTurno); 
-                }
             }
 
             if (posible) {
-                await libUsuarios.insertarEstadoUsuario(accion, idUsuario)
+                await libUsuarios.insertarEstadoPausadoUsuario(idUsuario)
                 return true;
             }
             return false;

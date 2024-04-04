@@ -1,12 +1,12 @@
-import {dbConexion} from "./dbConexion.mjs";
+import { dbConexion } from "./dbConexion.mjs";
 
 class LibUsuarios {
 
-     validarCredenciales(correo, contrasena) {
+    validarCredenciales(correo, contrasena) {
         return new Promise(async (resolve, reject) => {
             try {
                 const connection = await dbConexion.conectarDB(); // Establecer conexión a la base de datos
-    
+
                 const consultaUsuario = `SELECT * FROM Usuario WHERE correoElectronico = ?`;
                 connection.query(consultaUsuario, [correo], (err, resultados) => {
                     if (err) {
@@ -23,7 +23,7 @@ class LibUsuarios {
                                 resolve(false); // Contraseña incorrecta
                             } else {
                                 connection.end();
-                                resolve({valido: true, usuario}); // Credenciales válidas
+                                resolve({ valido: true, usuario }); // Credenciales válidas
                             }
                         }
                     }
@@ -34,12 +34,12 @@ class LibUsuarios {
         });
     }
 
-    obtenerUsuario(idUsuario){
+    obtenerUsuario(idUsuario) {
         return new Promise(async (resolve, reject) => {
             try {
-                const connection = await dbConexion.conectarDB(); 
+                const connection = await dbConexion.conectarDB();
                 connection.query('SELECT * FROM Usuario WHERE idUsuario =?', [idUsuario], (err, resultados) => {
-                    connection.end(); 
+                    connection.end();
                     if (err) {
                         console.error('Error al obtener usuarios:', err);
                         reject('Error al obtener usuarios');
@@ -57,30 +57,19 @@ class LibUsuarios {
         });
     }
 
-        insertarEstadoUsuario(accion, idUsuario) {
+    insertarEstadoIniciadoUsuario(idUsuario) {
         return new Promise(async (resolve, reject) => {
             try {
-                const connection = await dbConexion.conectarDB(); 
-    
-                let insertarTurno;
-    
-                if (accion === "iniciar_jornada") {
-                    insertarTurno = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Iniciado', ?)";
-                } else if (accion === "finalizar_jornada") {
-                    insertarTurno = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Finalizado', ?)";
-                } else if (accion === "reanudar_jornada") {
-                    insertarTurno = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Reanudado', ?)";
-                } else if (accion === "pausar_jornada") {
-                    insertarTurno = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Pausado', ?)";
-                }
-    
-                connection.query(insertarTurno, [idUsuario], (err, result) => {
-                    connection.end(); 
+                const connection = await dbConexion.conectarDB();
+                let insertarTurnoFinalizado = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Iniciado', ?)";
+
+                connection.query(insertarTurnoFinalizado, [idUsuario], (err, result) => {
+                    connection.end();
                     if (err) {
                         console.error('Error al actualizar el estadoTurno del usuario:', err);
                         reject('Error al actualizar el estadoTurno del usuario');
                     } else {
-                        resolve(true); 
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -88,12 +77,71 @@ class LibUsuarios {
             }
         });
     }
-    
+    insertarEstadoFinalizadoUsuario(idUsuario) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const connection = await dbConexion.conectarDB();
+                let insertarTurnoFinalizado = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Finalizado', ?)";
+
+                connection.query(insertarTurnoFinalizado, [idUsuario], (err, result) => {
+                    connection.end();
+                    if (err) {
+                        console.error('Error al actualizar el estadoTurno del usuario:', err);
+                        reject('Error al actualizar el estadoTurno del usuario');
+                    } else {
+                        resolve(true);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    insertarEstadoPausadoUsuario(idUsuario) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const connection = await dbConexion.conectarDB();
+                let insertarTurnoFinalizado = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Pausado', ?)";
+
+                connection.query(insertarTurnoFinalizado, [idUsuario], (err, result) => {
+                    connection.end();
+                    if (err) {
+                        console.error('Error al actualizar el estadoTurno del usuario:', err);
+                        reject('Error al actualizar el estadoTurno del usuario');
+                    } else {
+                        resolve(true);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+    insertarEstadoReanudadoUsuario(idUsuario) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const connection = await dbConexion.conectarDB();
+                let insertarTurnoFinalizado = "INSERT INTO Turno (estadoTurno, idUsuario) VALUES ('Reanudado', ?)";
+
+                connection.query(insertarTurnoFinalizado, [idUsuario], (err, result) => {
+                    connection.end();
+                    if (err) {
+                        console.error('Error al actualizar el estadoTurno del usuario:', err);
+                        reject('Error al actualizar el estadoTurno del usuario');
+                    } else {
+                        resolve(true);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
     obtenerUltimaHoraRegistro(idUsuario) {
         const consulta = `SELECT MAX(horaRegistroGMT) AS ultima_hora FROM turno WHERE idUsuario = ?`;
-    
+
         return new Promise(async (resolve, reject) => {
-            const connection = await dbConexion.conectarDB(); 
+            const connection = await dbConexion.conectarDB();
             connection.query(consulta, [idUsuario], (err, resultados) => {
                 if (err) {
                     console.error('Error al obtener la última hora de registro:', err);
@@ -102,7 +150,7 @@ class LibUsuarios {
                     if (resultados.length > 0) {
                         const ultima_hora = resultados[0].ultima_hora;
                         const hora_utc = new Date(ultima_hora);
-                       
+
                         resolve(hora_utc);
                     } else {
                         resolve("No se encontraron registros para este usuario.");
@@ -111,11 +159,11 @@ class LibUsuarios {
             });
         });
     }
-    
-    
+
+
 
 }
 
 
- export const libUsuarios = new LibUsuarios();
+export const libUsuarios = new LibUsuarios();
 
